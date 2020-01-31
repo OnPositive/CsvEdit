@@ -14,6 +14,8 @@
  */
 package org.fhsolution.eclipse.plugins.csvedit.providers;
 
+import org.eclipse.jface.viewers.AbstractTableViewer;
+import org.eclipse.jface.viewers.ILazyContentProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.fhsolution.eclipse.plugins.csvedit.model.AbstractCSVFile;
@@ -23,9 +25,16 @@ import org.fhsolution.eclipse.plugins.csvedit.model.AbstractCSVFile;
  * @author fhenri
  *
  */
-public class CSVContentProvider implements IStructuredContentProvider {
+public class CSVContentProvider implements IStructuredContentProvider, ILazyContentProvider {
 
-    /**
+    private AbstractCSVFile model;
+	private AbstractTableViewer viewer;
+
+	public CSVContentProvider(AbstractTableViewer viewer) {
+		this.viewer = viewer;
+	}
+
+	/**
      * Returns the elements to display in the table viewer
      *
      * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
@@ -52,5 +61,11 @@ public class CSVContentProvider implements IStructuredContentProvider {
      * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
      */
     public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+    	model = (AbstractCSVFile)newInput;
     }
+
+	@Override
+	public void updateElement(int index) {
+		viewer.replace(model.getRowAt(index), index);		
+	}
 }

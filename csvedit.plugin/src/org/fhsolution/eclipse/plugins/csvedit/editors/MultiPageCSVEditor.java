@@ -285,11 +285,12 @@ public abstract class MultiPageCSVEditor extends MultiPageEditorPart implements
 		 * tableViewer.refresh(); } });
 		 */
 		tableViewer = new TableViewer(canvas, SWT.MULTI | SWT.H_SCROLL
-				| SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
+				| SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER | SWT.VIRTUAL);
 		tableViewer.setUseHashlookup(true);
 		final Table table = tableViewer.getTable();
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
+		tableViewer.setUseHashlookup(true);
 
 		// set the sorter for the table
 		tableSorter = new CSVTableSorter();
@@ -446,7 +447,7 @@ public abstract class MultiPageCSVEditor extends MultiPageEditorPart implements
 	 * @throws Exception
 	 */
 	private void populateTablePage() throws Exception {
-		tableViewer.setContentProvider(new CSVContentProvider());
+		tableViewer.setContentProvider(new CSVContentProvider(tableViewer));
 
 		// make the selection available
 		getSite().setSelectionProvider(tableViewer);
@@ -576,6 +577,7 @@ public abstract class MultiPageCSVEditor extends MultiPageEditorPart implements
 						model.addColumn(colToInsert);
 
 						tableViewer.setInput(model);
+						tableViewer.setItemCount(model.size(false));
 						final TableColumn column = new TableColumn(tableViewer
 								.getTable(), SWT.LEFT);
 						column.setText(colToInsert);
@@ -593,6 +595,7 @@ public abstract class MultiPageCSVEditor extends MultiPageEditorPart implements
 		}
 
 		tableViewer.setInput(model);
+		tableViewer.setItemCount(model.size(false));
 		model.addModelListener(csvFileListener);
 
 		tableViewer.getTable().addListener(SWT.MenuDetect, new Listener() {

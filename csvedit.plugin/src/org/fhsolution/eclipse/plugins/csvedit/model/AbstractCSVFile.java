@@ -311,6 +311,28 @@ public abstract class AbstractCSVFile implements IRowChangesListener {
     }
 
     /**
+     * Returns row count in the model. Can be costly - if we skip comments, we need to iterate over all lines , so we have o(N) complexity
+     * @param includeCommentLine whether we count comment lines or not
+	 * @return row count, with or without comments
+	 */
+	public int size (boolean includeCommentLine) {
+		int count = 0;
+        for (CSVRow row : rows) {
+            // should we return the comment line
+            if (row.isCommentLine()) {
+                if (includeCommentLine) {
+                	count++;
+                }
+            }
+            // we do not add the header line
+            else if (!row.isHeader()) {
+            	count++;
+            }
+        }
+        return count;
+	}
+
+	/**
      * @param index
      * @return
      */
